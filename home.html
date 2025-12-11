@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Border Control Dashboard | Officer View</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #0a192f;
+            --secondary-dark: #112240;
+            --accent-blue: #64ffda;
+            --accent-red: #ff5252;
+            --accent-yellow: #ffb74d;
+            --accent-green: #69f0ae;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --card-bg: #1a2a3a;
+            --border-color: #2d3e50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            color: var(--accent-blue);
+            font-size: 32px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: var(--accent-blue);
+        }
+        
+        .officer-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--secondary-dark);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-blue);
+        }
+        
+        .officer-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: var(--secondary-dark);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            color: var(--accent-blue);
+        }
+        
+        /* Traveller Info Card */
+        .traveller-card {
+            grid-column: span 2;
+        }
+        
+        .traveller-info {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .traveller-photo {
+            flex-shrink: 0;
+        }
+        
+        .traveller-photo img {
+            width: 140px;
+            height: 180px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 3px solid var(--border-color);
+        }
+        
+        .traveller-details {
+            flex-grow: 1;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 12px;
+        }
+        
+        .detail-label {
+            width: 140px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        .flag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+        
+        .flag-icon {
+            width: 24px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        
+        /* Behaviour Meter */
+        .behaviour-meter-card {
+            grid-column: span 2;
+        }
+        
+        .meter-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .meter {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .meter-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .meter-bar {
+            height: 10px;
+            background: var(--card-bg);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .meter-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 1s ease;
+        }
+        
+        .meter-value {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Risk Score */
+        .risk-score-card {
+            grid-column: span 1;
+        }
+        
+        .risk-score-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .risk-score {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        
+        .risk-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .risk-low {
+            background-color: rgba(105, 240, 174, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .risk-medium {
+            background-color: rgba(255, 183, 77, 0.2);
+            color: var(--accent-yellow);
+        }
+        
+        .risk-high {
+            background-color: rgba(255, 82, 82, 0.2);
+            color: var(--accent-red);
+        }
+        
+        .risk-trend {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .trend-up {
+            color: var(--accent-red);
+        }
+        
+        .trend-down {
+            color: var(--accent-green);
+        }
+        
+        /* Alerts */
+        .alerts-card {
+            grid-column: span 3;
+        }
+        
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .alert-item:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .alert-critical {
+            border-left-color: var(--accent-red);
+        }
+        
+        .alert-high {
+            border-left-color: var(--accent-yellow);
+        }
+        
+        .alert-medium {
+            border-left-color: var(--accent-blue);
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        
+        .alert-critical .alert-icon {
+            color: var(--accent-red);
+        }
+        
+        .alert-high .alert-icon {
+            color: var(--accent-yellow);
+        }
+        
+        .alert-medium .alert-icon {
+            color: var(--accent-blue);
+        }
+        
+        .alert-content {
+            flex-grow: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .alert-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .alert-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Pipeline Diagram */
+        .pipeline-card {
+            grid-column: span 4;
+            margin-top: 10px;
+        }
+        
+        .pipeline-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .pipeline-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 40px 0;
+        }
+        
+        .pipeline-stage {
+            width: 22%;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            z-index: 2;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pipeline-stage-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+        
+        .pipeline-stage h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--accent-blue);
+        }
+        
+        .pipeline-stage p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .pipeline-arrow {
+            position: absolute;
+            font-size: 30px;
+            color: var(--accent-blue);
+            z-index: 1;
+        }
+        
+        .arrow-1 {
+            left: 22%;
+        }
+        
+        .arrow-2 {
+            left: 47%;
+        }
+        
+        .arrow-3 {
+            right: 22%;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .traveller-card, .behaviour-meter-card, .alerts-card {
+                grid-column: span 2;
+            }
+            
+            .risk-score-card {
+                grid-column: span 1;
+            }
+            
+            .pipeline-card {
+                grid-column: span 2;
+            }
+            
+            .pipeline-diagram {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .pipeline-stage {
+                width: 100%;
+            }
+            
+            .pipeline-arrow {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .traveller-card, .behaviour-meter-card, .alerts-card, .risk-score-card, .pipeline-card {
+                grid-column: span 1;
+            }
+            
+            .traveller-info {
+                flex-direction: column;
+            }
+            
+            .traveller-photo {
+                align-self: center;
+            }
+            
+            .meter-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Border Control <span>Dashboard</span></h1>
+            </div>
+            <div class="officer-info">
+                <img src="https://ui-avatars.com/api/?name=John+Doe&background=0a192f&color=64ffda&bold=true" alt="Officer Avatar">
+                <div>
+                    <div class="officer-name">Officer J. Dawson</div>
+                    <div class="officer-id">ID: BCP-7421</div>
+                </div>
+                <div class="current-time" id="current-time">10:24 AM</div>
+            </div>
+        </header>
+        
+        <main class="dashboard-grid">
+            <!-- Traveller Info Card -->
+            <div class="card traveller-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-passport"></i>
+                        Traveller Information
+                    </div>
+                    <div class="card-badge">
+                        <span class="risk-indicator risk-high">HIGH RISK</span>
+                    </div>
+                </div>
+                <div class="traveller-info">
+                    <div class="traveller-photo">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Traveller Photo">
+                    </div>
+                    <div class="traveller-details">
+                        <div class="detail-row">
+                            <div class="detail-label">Full Name:</div>
+                            <div class="detail-value">Marcus Chen</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Passport No:</div>
+                            <div class="detail-value">P7894321</div>
+                            <div class="flag">
+                                <img src="https://flagcdn.com/w40/sg.png" class="flag-icon" alt="Singapore Flag">
+                                <span>Singapore</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Date of Birth:</div>
+                            <div class="detail-value">15/08/1985 (38 years)</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Flight Details:</div>
+                            <div class="detail-value">SQ 321 • SIN → JFK • Arrived: 06:45 AM</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Visa Status:</div>
+                            <div class="detail-value">ESTA Approved • Expires: 15/12/2024</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Travel History:</div>
+                            <div class="detail-value">12 countries in past 24 months</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Purpose of Visit:</div>
+                            <div class="detail-value">Business Conference (3 days)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Behaviour Meter Card -->
+            <div class="card behaviour-meter-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-brain"></i>
+                        Behavioural Analysis
+                    </div>
+                    <div class="card-badge">
+                        <i class="fas fa-running"></i> Real-time Monitoring
+                    </div>
+                </div>
+                <div class="meter-container">
+                    <div class="meter">
+                        <div class="meter-label">
+                            <span>Nervousness</span>
+                            <span>High</span>
+                        </div>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="nervousness-meter" style="width: 85%; background-color: #ff5252;"></div>
+                        </div>
+                        <div class="meter-value">85%</div>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-label">
+                            <span>Eye Contact</span>
+                            <span>Low</span>
+                        </div>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="eye-contact-meter" style="width: 32%; background-color: #ff5252;"></div>
+                        </div>
+                        <div class="meter-value">32%</div>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-label">
+                            <span>Response Time</span>
+                            <span>Delayed</span>
+                        </div>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="response-meter" style="width: 72%; background-color: #ffb74d;"></div>
+                        </div>
+                        <div class="meter-value">72%</div>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-label">
+                            <span>Consistency</span>
+                            <span>Inconsistent</span>
+                        </div>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="consistency-meter" style="width: 61%; background-color: #ffb74d;"></div>
+                        </div>
+                        <div class="meter-value">61%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Risk Score Card -->
+            <div class="card risk-score-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Risk Assessment
+                    </div>
+                </div>
+                <div class="risk-score-display">
+                    <div class="risk-score" style="color: #ff5252;">78</div>
+                    <div class="risk-indicator risk-high">HIGH RISK</div>
+                    <div class="risk-trend">
+                        <i class="fas fa-arrow-up trend-up"></i>
+                        <span>Increased from 65 (14 days ago)</span>
+                    </div>
+                </div>
+                <div class="risk-factors">
+                    <div class="detail-row">
+                        <div class="detail-label">Travel Pattern:</div>
+                        <div class="detail-value" style="color: #ffb74d;">Suspicious</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Document Risk:</div>
+                        <div class="detail-value" style="color: #69f0ae;">Low</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Behavioral Risk:</div>
+                        <div class="detail-value" style="color: #ff5252;">High</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alerts Card -->
+            <div class="card alerts-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-bell"></i>
+                        Active Alerts
+                    </div>
+                    <div class="card-badge">
+                        <span class="risk-indicator risk-high">3 NEW</span>
+                    </div>
+                </div>
+                <div class="alert-list">
+                    <div class="alert-item alert-critical">
+                        <i class="fas fa-skull-crossbones alert-icon"></i>
+                        <div class="alert-content">
+                            <div class="alert-title">Multiple Inconsistent Statements</div>
+                            <div class="alert-desc">Contradicting information provided about accommodation and conference details</div>
+                        </div>
+                        <div class="alert-time">10:18 AM</div>
+                    </div>
+                    <div class="alert-item alert-high">
+                        <i class="fas fa-history alert-icon"></i>
+                        <div class="alert-content">
+                            <div class="alert-title">Frequent Travel to High-Risk Countries</div>
+                            <div class="alert-desc">5 visits to countries with Level 3/4 travel advisories in past 12 months</div>
+                        </div>
+                        <div class="alert-time">09:45 AM</div>
+                    </div>
+                    <div class="alert-item alert-medium">
+                        <i class="fas fa-plane alert-icon"></i>
+                        <div class="alert-content">
+                            <div class="alert-title">Last-Minute Flight Booking</div>
+                            <div class="alert-desc">Ticket purchased only 12 hours before departure with premium fare</div>
+                        </div>
+                        <div class="alert-time">08:30 AM</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pipeline Diagram Card -->
+            <div class="card pipeline-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Border Security Processing Pipeline
+                    </div>
+                </div>
+                <div class="pipeline-diagram">
+                    <div class="pipeline-stage">
+                        <div class="pipeline-stage-icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <h3>Input</h3>
+                        <p>Passport scanning, biometric data, API/PNR information, visa documents, and declaration forms</p>
+                    </div>
+                    
+                    <i class="fas fa-arrow-right pipeline-arrow arrow-1"></i>
+                    
+                    <div class="pipeline-stage">
+                        <div class="pipeline-stage-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>Processing</h3>
+                        <p>Risk assessment algorithms, document verification, behavioral analysis, and database cross-checks</p>
+                    </div>
+                    
+                    <i class="fas fa-arrow-right pipeline-arrow arrow-2"></i>
+                    
+                    <div class="pipeline-stage">
+                        <div class="pipeline-stage-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Analysis</h3>
+                        <p>Risk scoring, alert generation, pattern recognition, and decision support for officers</p>
+                    </div>
+                    
+                    <i class="fas fa-arrow-right pipeline-arrow arrow-3"></i>
+                    
+                    <div class="pipeline-stage">
+                        <div class="pipeline-stage-icon">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <h3>Output</h3>
+                        <p>Admit/Detain decisions, secondary screening flags, intelligence reports, and data logging</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Border Control Dashboard v2.4 | For authorized personnel only | Last updated: <span id="current-date"></span></p>
+            <p>All data is classified and protected under International Border Security Protocols</p>
+        </footer>
+    </div>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('current-time').textContent = timeString;
+            
+            // Update date in footer
+            const dateString = now.toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
+            document.getElementById('current-date').textContent = dateString;
+        }
+        
+        // Initialize time
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Animate behaviour meters on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading animation for meters
+            const meters = document.querySelectorAll('.meter-fill');
+            meters.forEach(meter => {
+                const width = meter.style.width;
+                meter.style.width = '0%';
+                
+                setTimeout(() => {
+                    meter.style.width = width;
+                }, 300);
+            });
+            
+            // Add click events to alert items
+            const alertItems = document.querySelectorAll('.alert-item');
+            alertItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Toggle active state
+                    alertItems.forEach(otherItem => {
+                        otherItem.style.opacity = '1';
+                    });
+                    
+                    this.style.opacity = '0.7';
+                    
+                    // In a real app, this would show more details about the alert
+                    console.log('Alert clicked:', this.querySelector('.alert-title').textContent);
+                });
+            });
+            
+            // Simulate risk score change over time
+            const riskScoreElement = document.querySelector('.risk-score');
+            let currentScore = 78;
+            
+            // Every 30 seconds, simulate a small change in risk score
+            setInterval(() => {
+                // Randomly adjust score by -3 to +3 points
+                const change = Math.floor(Math.random() * 7) - 3;
+                currentScore = Math.max(10, Math.min(99, currentScore + change));
+                
+                // Update display with animation
+                riskScoreElement.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    riskScoreElement.textContent = currentScore;
+                    riskScoreElement.style.transform = 'scale(1)';
+                    
+                    // Update color based on score
+                    if (currentScore >= 70) {
+                        riskScoreElement.style.color = '#ff5252';
+                    } else if (currentScore >= 40) {
+                        riskScoreElement.style.color = '#ffb74d';
+                    } else {
+                        riskScoreElement.style.color = '#69f0ae';
+                    }
+                }, 150);
+            }, 30000);
+        });
+        
+        // Simulate live updating of behaviour meters
+        setInterval(() => {
+            // Randomly adjust meter values slightly to simulate real-time monitoring
+            const meters = [
+                {id: 'nervousness-meter', current: 85},
+                {id: 'eye-contact-meter', current: 32},
+                {id: 'response-meter', current: 72},
+                {id: 'consistency-meter', current: 61}
+            ];
+            
+            meters.forEach(meter => {
+                const element = document.getElementById(meter.id);
+                const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
+                let newValue = Math.max(5, Math.min(95, meter.current + change));
+                
+                // Update the meter with animation
+                element.style.width = `${newValue}%`;
+                
+                // Update color based on value
+                if (newValue >= 70) {
+                    element.style.backgroundColor = '#ff5252';
+                } else if (newValue >= 40) {
+                    element.style.backgroundColor = '#ffb74d';
+                } else {
+                    element.style.backgroundColor = '#69f0ae';
+                }
+                
+                // Update the displayed percentage
+                const meterElement = element.closest('.meter');
+                const valueElement = meterElement.querySelector('.meter-value');
+                valueElement.textContent = `${newValue}%`;
+                
+                // Update label if needed
+                const labelElement = meterElement.querySelector('.meter-label span:last-child');
+                if (newValue >= 70) {
+                    labelElement.textContent = 'High';
+                } else if (newValue >= 40) {
+                    labelElement.textContent = 'Medium';
+                } else {
+                    labelElement.textContent = 'Low';
+                }
+            });
+        }, 8000);
+    </script>
+</body>
+</html>
