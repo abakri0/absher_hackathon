@@ -1,868 +1,615 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Border Control Dashboard | Officer View</title>
+    <title>لوحة تحليل نقاط الألم الخفية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-dark: #0a192f;
-            --secondary-dark: #112240;
-            --accent-blue: #64ffda;
-            --accent-red: #ff5252;
-            --accent-yellow: #ffb74d;
-            --accent-green: #69f0ae;
-            --text-light: #e6f1ff;
-            --text-muted: #8892b0;
-            --card-bg: #1a2a3a;
-            --border-color: #2d3e50;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --border-radius: 10px;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Noto Sans Arabic', Tahoma, sans-serif;
         }
         
         body {
-            background-color: var(--primary-dark);
-            color: var(--text-light);
+            background-color: #f8f9fa;
+            color: #333;
             line-height: 1.6;
-            overflow-x: hidden;
-        }
-        
-        .container {
+            padding: 20px;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
         }
         
-        /* Header Styles */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
+            text-align: center;
             margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
         }
         
-        .logo i {
-            color: var(--accent-blue);
-            font-size: 32px;
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
         }
         
-        .logo h1 {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        
-        .logo span {
-            color: var(--accent-blue);
-        }
-        
-        .officer-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: var(--secondary-dark);
-            padding: 10px 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent-blue);
-        }
-        
-        .officer-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-blue);
-        }
-        
-        /* Dashboard Grid */
-        .dashboard-grid {
+        .main-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: auto;
+            grid-template-columns: 1fr;
             gap: 25px;
-            margin-bottom: 40px;
+        }
+        
+        @media (min-width: 992px) {
+            .main-container {
+                grid-template-columns: 1fr 1fr;
+            }
         }
         
         .card {
-            background: var(--secondary-dark);
-            border-radius: 12px;
+            background: white;
+            border-radius: var(--border-radius);
             padding: 25px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
         }
         
         .card-title {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
         .card-title i {
-            color: var(--accent-blue);
+            color: var(--secondary-color);
         }
         
-        /* Traveller Info Card */
-        .traveller-card {
-            grid-column: span 2;
+        .counter-list {
+            list-style: none;
+            margin-bottom: 20px;
         }
         
-        .traveller-info {
-            display: flex;
-            gap: 25px;
-        }
-        
-        .traveller-photo {
-            flex-shrink: 0;
-        }
-        
-        .traveller-photo img {
-            width: 140px;
-            height: 180px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 3px solid var(--border-color);
-        }
-        
-        .traveller-details {
-            flex-grow: 1;
-        }
-        
-        .detail-row {
-            display: flex;
-            margin-bottom: 12px;
-        }
-        
-        .detail-label {
-            width: 140px;
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-        
-        .detail-value {
-            font-weight: 500;
-        }
-        
-        .flag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 10px;
-        }
-        
-        .flag-icon {
-            width: 24px;
-            height: 16px;
-            border-radius: 2px;
-        }
-        
-        /* Behaviour Meter */
-        .behaviour-meter-card {
-            grid-column: span 2;
-        }
-        
-        .meter-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        
-        .meter {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .meter-label {
+        .counter-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .meter-bar {
-            height: 10px;
-            background: var(--card-bg);
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 5px;
-        }
-        
-        .meter-fill {
-            height: 100%;
-            border-radius: 5px;
-            transition: width 1s ease;
-        }
-        
-        .meter-value {
-            text-align: right;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        
-        /* Risk Score */
-        .risk-score-card {
-            grid-column: span 1;
-        }
-        
-        .risk-score-display {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .risk-score {
-            font-size: 64px;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-        
-        .risk-indicator {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        
-        .risk-low {
-            background-color: rgba(105, 240, 174, 0.2);
-            color: var(--accent-green);
-        }
-        
-        .risk-medium {
-            background-color: rgba(255, 183, 77, 0.2);
-            color: var(--accent-yellow);
-        }
-        
-        .risk-high {
-            background-color: rgba(255, 82, 82, 0.2);
-            color: var(--accent-red);
-        }
-        
-        .risk-trend {
-            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        
-        .trend-up {
-            color: var(--accent-red);
-        }
-        
-        .trend-down {
-            color: var(--accent-green);
-        }
-        
-        /* Alerts */
-        .alerts-card {
-            grid-column: span 3;
-        }
-        
-        .alert-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .alert-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: var(--card-bg);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: var(--light-color);
             border-radius: 8px;
-            border-left: 4px solid;
             transition: all 0.3s ease;
         }
         
-        .alert-item:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.05);
+        .counter-item:hover {
+            background-color: #e0e7ed;
         }
         
-        .alert-critical {
-            border-left-color: var(--accent-red);
+        .counter-name {
+            font-weight: bold;
         }
         
-        .alert-high {
-            border-left-color: var(--accent-yellow);
+        .counter-intensity {
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
         }
         
-        .alert-medium {
-            border-left-color: var(--accent-blue);
+        .high-intensity {
+            background-color: var(--accent-color);
         }
         
-        .alert-icon {
-            font-size: 20px;
-            margin-right: 15px;
+        .medium-intensity {
+            background-color: var(--warning-color);
         }
         
-        .alert-critical .alert-icon {
-            color: var(--accent-red);
+        .low-intensity {
+            background-color: var(--success-color);
         }
         
-        .alert-high .alert-icon {
-            color: var(--accent-yellow);
+        .time-chart-container {
+            height: 300px;
+            margin-top: 20px;
         }
         
-        .alert-medium .alert-icon {
-            color: var(--accent-blue);
+        .impact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
         
-        .alert-content {
-            flex-grow: 1;
-        }
-        
-        .alert-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .alert-desc {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-        
-        .alert-time {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        
-        /* Pipeline Diagram */
-        .pipeline-card {
-            grid-column: span 4;
-            margin-top: 10px;
-        }
-        
-        .pipeline-title {
+        .impact-item {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
             text-align: center;
-            margin-bottom: 30px;
         }
         
-        .pipeline-diagram {
+        .impact-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .impact-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .improvement {
+            color: var(--success-color);
+        }
+        
+        .decline {
+            color: var(--accent-color);
+        }
+        
+        .training-comparison {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            padding: 40px 0;
+            margin-top: 15px;
         }
         
-        .pipeline-stage {
-            width: 22%;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 25px;
+        .training-type {
             text-align: center;
-            z-index: 2;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            flex: 1;
+            margin: 0 10px;
+            border-radius: 8px;
+            background-color: var(--light-color);
         }
         
-        .pipeline-stage-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-            color: var(--accent-blue);
-        }
-        
-        .pipeline-stage h3 {
-            font-size: 18px;
+        .training-type h4 {
             margin-bottom: 10px;
-            color: var(--accent-blue);
+            color: var(--primary-color);
         }
         
-        .pipeline-stage p {
-            font-size: 14px;
-            color: var(--text-muted);
+        .training-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
         }
         
-        .pipeline-arrow {
-            position: absolute;
-            font-size: 30px;
-            color: var(--accent-blue);
-            z-index: 1;
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
         
-        .arrow-1 {
-            left: 22%;
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .arrow-2 {
-            left: 47%;
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
         }
         
-        .arrow-3 {
-            right: 22%;
+        .btn-export {
+            background-color: var(--success-color);
         }
         
-        /* Footer */
+        .btn-export:hover {
+            background-color: #219653;
+        }
+        
+        .btn-refresh {
+            background-color: var(--primary-color);
+        }
+        
+        .btn-refresh:hover {
+            background-color: #1a252f;
+        }
+        
         footer {
             text-align: center;
-            padding: 20px;
             margin-top: 40px;
-            color: var(--text-muted);
-            font-size: 14px;
-            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9rem;
         }
         
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .traveller-card, .behaviour-meter-card, .alerts-card {
-                grid-column: span 2;
-            }
-            
-            .risk-score-card {
-                grid-column: span 1;
-            }
-            
-            .pipeline-card {
-                grid-column: span 2;
-            }
-            
-            .pipeline-diagram {
-                flex-direction: column;
-                gap: 30px;
-            }
-            
-            .pipeline-stage {
-                width: 100%;
-            }
-            
-            .pipeline-arrow {
-                display: none;
-            }
+        .highlight {
+            color: var(--accent-color);
+            font-weight: bold;
         }
         
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .traveller-card, .behaviour-meter-card, .alerts-card, .risk-score-card, .pipeline-card {
-                grid-column: span 1;
-            }
-            
-            .traveller-info {
-                flex-direction: column;
-            }
-            
-            .traveller-photo {
-                align-self: center;
-            }
-            
-            .meter-container {
-                grid-template-columns: 1fr;
-            }
-            
-            header {
-                flex-direction: column;
-                gap: 20px;
-                align-items: flex-start;
-            }
+        .insight-box {
+            background-color: #e8f4fc;
+            border-right: 5px solid var(--secondary-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .insight-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-shield-alt"></i>
-                <h1>Border Control <span>Dashboard</span></h1>
+    <header>
+        <h1><i class="fas fa-chart-line"></i> لوحة تحليل نقاط الألم الخفية</h1>
+        <p class="subtitle">جعل نقاط الألم غير المرئية مرئية وقابلة للقياس والإصلاح من خلال تحليل سلوكيات العدادات، ساعات الذروة، تأثير التغييرات، والتدريبات</p>
+    </header>
+    
+    <main class="main-container">
+        <!-- العدادات ذات أعلى شدة سلوك -->
+        <section class="card">
+            <h2 class="card-title"><i class="fas fa-sort-amount-down"></i> العدادات ذات أعلى شدة سلوك</h2>
+            <ul class="counter-list" id="countersList">
+                <!-- سيتم ملؤها بواسطة JavaScript -->
+            </ul>
+            <div class="insight-box">
+                <div class="insight-title">رؤية تحليلية:</div>
+                <p>عداد <span class="highlight">المدخل الرئيسي</span> يسجل أعلى شدة سلوك مما يشير إلى احتمال وجود ازدحام عند نقطة الدخول. هذا يتطلب مراجعة تصميم المدخل أو إضافة مسارات دخول بديلة.</p>
             </div>
-            <div class="officer-info">
-                <img src="https://ui-avatars.com/api/?name=John+Doe&background=0a192f&color=64ffda&bold=true" alt="Officer Avatar">
-                <div>
-                    <div class="officer-name">Officer J. Dawson</div>
-                    <div class="officer-id">ID: BCP-7421</div>
-                </div>
-                <div class="current-time" id="current-time">10:24 AM</div>
-            </div>
-        </header>
+        </section>
         
-        <main class="dashboard-grid">
-            <!-- Traveller Info Card -->
-            <div class="card traveller-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-passport"></i>
-                        Traveller Information
-                    </div>
-                    <div class="card-badge">
-                        <span class="risk-indicator risk-high">HIGH RISK</span>
-                    </div>
-                </div>
-                <div class="traveller-info">
-                    <div class="traveller-photo">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Traveller Photo">
-                    </div>
-                    <div class="traveller-details">
-                        <div class="detail-row">
-                            <div class="detail-label">Full Name:</div>
-                            <div class="detail-value">Marcus Chen</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Passport No:</div>
-                            <div class="detail-value">P7894321</div>
-                            <div class="flag">
-                                <img src="https://flagcdn.com/w40/sg.png" class="flag-icon" alt="Singapore Flag">
-                                <span>Singapore</span>
-                            </div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Date of Birth:</div>
-                            <div class="detail-value">15/08/1985 (38 years)</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Flight Details:</div>
-                            <div class="detail-value">SQ 321 • SIN → JFK • Arrived: 06:45 AM</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Visa Status:</div>
-                            <div class="detail-value">ESTA Approved • Expires: 15/12/2024</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Travel History:</div>
-                            <div class="detail-value">12 countries in past 24 months</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Purpose of Visit:</div>
-                            <div class="detail-value">Business Conference (3 days)</div>
-                        </div>
-                    </div>
-                </div>
+        <!-- ساعات الذروة والعمل -->
+        <section class="card">
+            <h2 class="card-title"><i class="fas fa-clock"></i> ساعات الذروة والقمم السلوكية</h2>
+            <div class="time-chart-container">
+                <canvas id="hourlyChart"></canvas>
             </div>
-            
-            <!-- Behaviour Meter Card -->
-            <div class="card behaviour-meter-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-brain"></i>
-                        Behavioural Analysis
-                    </div>
-                    <div class="card-badge">
-                        <i class="fas fa-running"></i> Real-time Monitoring
-                    </div>
-                </div>
-                <div class="meter-container">
-                    <div class="meter">
-                        <div class="meter-label">
-                            <span>Nervousness</span>
-                            <span>High</span>
-                        </div>
-                        <div class="meter-bar">
-                            <div class="meter-fill" id="nervousness-meter" style="width: 85%; background-color: #ff5252;"></div>
-                        </div>
-                        <div class="meter-value">85%</div>
-                    </div>
-                    <div class="meter">
-                        <div class="meter-label">
-                            <span>Eye Contact</span>
-                            <span>Low</span>
-                        </div>
-                        <div class="meter-bar">
-                            <div class="meter-fill" id="eye-contact-meter" style="width: 32%; background-color: #ff5252;"></div>
-                        </div>
-                        <div class="meter-value">32%</div>
-                    </div>
-                    <div class="meter">
-                        <div class="meter-label">
-                            <span>Response Time</span>
-                            <span>Delayed</span>
-                        </div>
-                        <div class="meter-bar">
-                            <div class="meter-fill" id="response-meter" style="width: 72%; background-color: #ffb74d;"></div>
-                        </div>
-                        <div class="meter-value">72%</div>
-                    </div>
-                    <div class="meter">
-                        <div class="meter-label">
-                            <span>Consistency</span>
-                            <span>Inconsistent</span>
-                        </div>
-                        <div class="meter-bar">
-                            <div class="meter-fill" id="consistency-meter" style="width: 61%; background-color: #ffb74d;"></div>
-                        </div>
-                        <div class="meter-value">61%</div>
-                    </div>
-                </div>
+            <div class="insight-box">
+                <div class="insight-title">رؤية تحليلية:</div>
+                <p>أوقات الذروة الرئيسية هي <span class="highlight">الساعة 10 صباحًا والساعة 4 عصرًا</span>. يمكن تخفيف الازدحام خلال هذه الفترات عن طريق توزيع المواعيد أو إضافة موظفين إضافيين.</p>
             </div>
-            
-            <!-- Risk Score Card -->
-            <div class="card risk-score-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Risk Assessment
-                    </div>
-                </div>
-                <div class="risk-score-display">
-                    <div class="risk-score" style="color: #ff5252;">78</div>
-                    <div class="risk-indicator risk-high">HIGH RISK</div>
-                    <div class="risk-trend">
-                        <i class="fas fa-arrow-up trend-up"></i>
-                        <span>Increased from 65 (14 days ago)</span>
-                    </div>
-                </div>
-                <div class="risk-factors">
-                    <div class="detail-row">
-                        <div class="detail-label">Travel Pattern:</div>
-                        <div class="detail-value" style="color: #ffb74d;">Suspicious</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Document Risk:</div>
-                        <div class="detail-value" style="color: #69f0ae;">Low</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Behavioral Risk:</div>
-                        <div class="detail-value" style="color: #ff5252;">High</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Alerts Card -->
-            <div class="card alerts-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-bell"></i>
-                        Active Alerts
-                    </div>
-                    <div class="card-badge">
-                        <span class="risk-indicator risk-high">3 NEW</span>
-                    </div>
-                </div>
-                <div class="alert-list">
-                    <div class="alert-item alert-critical">
-                        <i class="fas fa-skull-crossbones alert-icon"></i>
-                        <div class="alert-content">
-                            <div class="alert-title">Multiple Inconsistent Statements</div>
-                            <div class="alert-desc">Contradicting information provided about accommodation and conference details</div>
-                        </div>
-                        <div class="alert-time">10:18 AM</div>
-                    </div>
-                    <div class="alert-item alert-high">
-                        <i class="fas fa-history alert-icon"></i>
-                        <div class="alert-content">
-                            <div class="alert-title">Frequent Travel to High-Risk Countries</div>
-                            <div class="alert-desc">5 visits to countries with Level 3/4 travel advisories in past 12 months</div>
-                        </div>
-                        <div class="alert-time">09:45 AM</div>
-                    </div>
-                    <div class="alert-item alert-medium">
-                        <i class="fas fa-plane alert-icon"></i>
-                        <div class="alert-content">
-                            <div class="alert-title">Last-Minute Flight Booking</div>
-                            <div class="alert-desc">Ticket purchased only 12 hours before departure with premium fare</div>
-                        </div>
-                        <div class="alert-time">08:30 AM</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Pipeline Diagram Card -->
-            <div class="card pipeline-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-project-diagram"></i>
-                        Border Security Processing Pipeline
-                    </div>
-                </div>
-                <div class="pipeline-diagram">
-                    <div class="pipeline-stage">
-                        <div class="pipeline-stage-icon">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </div>
-                        <h3>Input</h3>
-                        <p>Passport scanning, biometric data, API/PNR information, visa documents, and declaration forms</p>
-                    </div>
-                    
-                    <i class="fas fa-arrow-right pipeline-arrow arrow-1"></i>
-                    
-                    <div class="pipeline-stage">
-                        <div class="pipeline-stage-icon">
-                            <i class="fas fa-cogs"></i>
-                        </div>
-                        <h3>Processing</h3>
-                        <p>Risk assessment algorithms, document verification, behavioral analysis, and database cross-checks</p>
-                    </div>
-                    
-                    <i class="fas fa-arrow-right pipeline-arrow arrow-2"></i>
-                    
-                    <div class="pipeline-stage">
-                        <div class="pipeline-stage-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <h3>Analysis</h3>
-                        <p>Risk scoring, alert generation, pattern recognition, and decision support for officers</p>
-                    </div>
-                    
-                    <i class="fas fa-arrow-right pipeline-arrow arrow-3"></i>
-                    
-                    <div class="pipeline-stage">
-                        <div class="pipeline-stage-icon">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </div>
-                        <h3>Output</h3>
-                        <p>Admit/Detain decisions, secondary screening flags, intelligence reports, and data logging</p>
-                    </div>
-                </div>
-            </div>
-        </main>
+        </section>
         
-        <footer>
-            <p>Border Control Dashboard v2.4 | For authorized personnel only | Last updated: <span id="current-date"></span></p>
-            <p>All data is classified and protected under International Border Security Protocols</p>
-        </footer>
+        <!-- تأثير التغييرات -->
+        <section class="card">
+            <h2 class="card-title"><i class="fas fa-exchange-alt"></i> تأثير تغييرات اللافتات/التخطيط/السياسات</h2>
+            <div class="impact-container" id="impactContainer">
+                <!-- سيتم ملؤها بواسطة JavaScript -->
+            </div>
+            <div class="insight-box">
+                <div class="insight-title">رؤية تحليلية:</div>
+                <p>تغييرات <span class="highlight">اللافتات الإرشادية</span> أدت إلى أكبر تحسن في تدفق المراجعين بنسبة 32%. يمكن تعميم هذا النجاح على مناطق أخرى.</p>
+            </div>
+        </section>
+        
+        <!-- الفروق في تدريب الضباط -->
+        <section class="card">
+            <h2 class="card-title"><i class="fas fa-user-graduate"></i> الفروق في تدريب الضباط/الموظفين</h2>
+            <div class="training-comparison" id="trainingComparison">
+                <!-- سيتم ملؤها بواسطة JavaScript -->
+            </div>
+            <div class="insight-box">
+                <div class="insight-title">رؤية تحليلية:</div>
+                <p>الموظفون الذين تلقوا <span class="highlight">التدريب المتقدم</span> حققوا نتائج أفضل بنسبة 28% في معالجة المراجعين. يقترح توسيع نطاق هذا التدريب ليشمل جميع الموظفين.</p>
+            </div>
+        </section>
+    </main>
+    
+    <div class="controls">
+        <button class="btn btn-refresh" id="refreshBtn">
+            <i class="fas fa-sync-alt"></i> تحديث البيانات
+        </button>
+        <button class="btn btn-export" id="exportBtn">
+            <i class="fas fa-file-export"></i> تصدير التقرير
+        </button>
     </div>
+    
+    <footer>
+        <p>© 2023 نظام تحليل نقاط الألم الخفية. تم تصميم هذه اللوحة لجعل المشاكل غير المرئية مرئية وقابلة للحل.</p>
+        <p>جميع البيانات معروضة لأغراض تحليلية وتحتاج إلى تفسير من قبل المختصين.</p>
+    </footer>
 
     <script>
-        // Update current time
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('current-time').textContent = timeString;
-            
-            // Update date in footer
-            const dateString = now.toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
-            document.getElementById('current-date').textContent = dateString;
-        }
+        // بيانات العدادات وشدة السلوك
+        const counters = [
+            { name: "المدخل الرئيسي", intensity: 95 },
+            { name: "عداد الخدمة السريعة", intensity: 87 },
+            { name: "عداد الاستعلامات", intensity: 78 },
+            { name: "عداد الدفع النقدي", intensity: 72 },
+            { name: "عداد الخدمات الخاصة", intensity: 65 },
+            { name: "عداد الشباك الخارجي", intensity: 58 }
+        ];
         
-        // Initialize time
-        updateTime();
-        setInterval(updateTime, 1000);
+        // بيانات ساعات الذروة
+        const hourlyData = {
+            labels: ["8 ص", "9 ص", "10 ص", "11 ص", "12 م", "1 م", "2 م", "3 م", "4 م", "5 م"],
+            values: [65, 78, 92, 85, 72, 68, 74, 81, 94, 76]
+        };
         
-        // Animate behaviour meters on page load
+        // بيانات تأثير التغييرات
+        const impacts = [
+            { label: "تغييرات اللافتات الإرشادية", value: "+32%", type: "improvement" },
+            { label: "إعادة تخطيط منطقة الانتظار", value: "+18%", type: "improvement" },
+            { label: "سياسة الخدمة بالأسبقية", value: "+24%", type: "improvement" },
+            { label: "تغيير موقع العدادات", value: "-5%", type: "decline" }
+        ];
+        
+        // بيانات تدريب الضباط
+        const trainingData = [
+            { type: "التدريب الأساسي", score: 72 },
+            { type: "التدريب المتقدم", score: 92 },
+            { type: "التدريب المتخصص", score: 85 }
+        ];
+        
+        // تهيئة العناصر عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
-            // Simulate loading animation for meters
-            const meters = document.querySelectorAll('.meter-fill');
-            meters.forEach(meter => {
-                const width = meter.style.width;
-                meter.style.width = '0%';
-                
-                setTimeout(() => {
-                    meter.style.width = width;
-                }, 300);
-            });
+            renderCounters();
+            renderHourlyChart();
+            renderImpacts();
+            renderTrainingComparison();
             
-            // Add click events to alert items
-            const alertItems = document.querySelectorAll('.alert-item');
-            alertItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // Toggle active state
-                    alertItems.forEach(otherItem => {
-                        otherItem.style.opacity = '1';
-                    });
-                    
-                    this.style.opacity = '0.7';
-                    
-                    // In a real app, this would show more details about the alert
-                    console.log('Alert clicked:', this.querySelector('.alert-title').textContent);
-                });
-            });
-            
-            // Simulate risk score change over time
-            const riskScoreElement = document.querySelector('.risk-score');
-            let currentScore = 78;
-            
-            // Every 30 seconds, simulate a small change in risk score
-            setInterval(() => {
-                // Randomly adjust score by -3 to +3 points
-                const change = Math.floor(Math.random() * 7) - 3;
-                currentScore = Math.max(10, Math.min(99, currentScore + change));
-                
-                // Update display with animation
-                riskScoreElement.style.transform = 'scale(1.1)';
-                setTimeout(() => {
-                    riskScoreElement.textContent = currentScore;
-                    riskScoreElement.style.transform = 'scale(1)';
-                    
-                    // Update color based on score
-                    if (currentScore >= 70) {
-                        riskScoreElement.style.color = '#ff5252';
-                    } else if (currentScore >= 40) {
-                        riskScoreElement.style.color = '#ffb74d';
-                    } else {
-                        riskScoreElement.style.color = '#69f0ae';
-                    }
-                }, 150);
-            }, 30000);
+            // إضافة التفاعلية للأزرار
+            document.getElementById('refreshBtn').addEventListener('click', refreshData);
+            document.getElementById('exportBtn').addEventListener('click', exportReport);
         });
         
-        // Simulate live updating of behaviour meters
-        setInterval(() => {
-            // Randomly adjust meter values slightly to simulate real-time monitoring
-            const meters = [
-                {id: 'nervousness-meter', current: 85},
-                {id: 'eye-contact-meter', current: 32},
-                {id: 'response-meter', current: 72},
-                {id: 'consistency-meter', current: 61}
-            ];
+        // عرض العدادات ذات أعلى شدة سلوك
+        function renderCounters() {
+            const countersList = document.getElementById('countersList');
+            countersList.innerHTML = '';
             
-            meters.forEach(meter => {
-                const element = document.getElementById(meter.id);
-                const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
-                let newValue = Math.max(5, Math.min(95, meter.current + change));
+            // ترتيب العدادات تنازلياً حسب الشدة
+            counters.sort((a, b) => b.intensity - a.intensity);
+            
+            counters.forEach(counter => {
+                const li = document.createElement('li');
+                li.className = 'counter-item';
                 
-                // Update the meter with animation
-                element.style.width = `${newValue}%`;
+                // تحديد مستوى الشدة
+                let intensityClass = 'low-intensity';
+                if (counter.intensity >= 80) intensityClass = 'high-intensity';
+                else if (counter.intensity >= 70) intensityClass = 'medium-intensity';
                 
-                // Update color based on value
-                if (newValue >= 70) {
-                    element.style.backgroundColor = '#ff5252';
-                } else if (newValue >= 40) {
-                    element.style.backgroundColor = '#ffb74d';
-                } else {
-                    element.style.backgroundColor = '#69f0ae';
-                }
+                li.innerHTML = `
+                    <span class="counter-name">${counter.name}</span>
+                    <span class="counter-intensity ${intensityClass}">${counter.intensity}%</span>
+                `;
                 
-                // Update the displayed percentage
-                const meterElement = element.closest('.meter');
-                const valueElement = meterElement.querySelector('.meter-value');
-                valueElement.textContent = `${newValue}%`;
-                
-                // Update label if needed
-                const labelElement = meterElement.querySelector('.meter-label span:last-child');
-                if (newValue >= 70) {
-                    labelElement.textContent = 'High';
-                } else if (newValue >= 40) {
-                    labelElement.textContent = 'Medium';
-                } else {
-                    labelElement.textContent = 'Low';
+                countersList.appendChild(li);
+            });
+        }
+        
+        // رسم مخطط ساعات الذروة
+        function renderHourlyChart() {
+            const ctx = document.getElementById('hourlyChart').getContext('2d');
+            
+            // تحديد الألوان بناءً على القيمة
+            const backgroundColors = hourlyData.values.map(value => {
+                if (value >= 90) return 'rgba(231, 76, 60, 0.7)';
+                if (value >= 80) return 'rgba(243, 156, 18, 0.7)';
+                return 'rgba(52, 152, 219, 0.7)';
+            });
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hourlyData.labels,
+                    datasets: [{
+                        label: 'شدة السلوك',
+                        data: hourlyData.values,
+                        backgroundColor: backgroundColors,
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'النسبة المئوية للشدة'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'الوقت خلال اليوم'
+                            }
+                        }
+                    }
                 }
             });
-        }, 8000);
+        }
+        
+        // عرض تأثير التغييرات
+        function renderImpacts() {
+            const impactContainer = document.getElementById('impactContainer');
+            impactContainer.innerHTML = '';
+            
+            impacts.forEach(impact => {
+                const div = document.createElement('div');
+                div.className = 'impact-item';
+                
+                div.innerHTML = `
+                    <div class="impact-label">${impact.label}</div>
+                    <div class="impact-value ${impact.type}">${impact.value}</div>
+                `;
+                
+                impactContainer.appendChild(div);
+            });
+        }
+        
+        // عرض مقارنة التدريب
+        function renderTrainingComparison() {
+            const trainingComparison = document.getElementById('trainingComparison');
+            trainingComparison.innerHTML = '';
+            
+            trainingData.forEach(training => {
+                const div = document.createElement('div');
+                div.className = 'training-type';
+                
+                div.innerHTML = `
+                    <h4>${training.type}</h4>
+                    <div class="training-score">${training.score}%</div>
+                `;
+                
+                trainingComparison.appendChild(div);
+            });
+        }
+        
+        // تحديث البيانات عشوائيًا لمحاكاة بيانات حية
+        function refreshData() {
+            // تحديث بيانات العدادات
+            counters.forEach(counter => {
+                // تغيير عشوائي بحدود ±5%
+                const change = Math.floor(Math.random() * 11) - 5;
+                counter.intensity = Math.max(50, Math.min(100, counter.intensity + change));
+            });
+            
+            // تحديث بيانات الساعات
+            hourlyData.values = hourlyData.values.map(value => {
+                const change = Math.floor(Math.random() * 11) - 5;
+                return Math.max(50, Math.min(100, value + change));
+            });
+            
+            // تحديث بيانات التأثير
+            impacts.forEach(impact => {
+                if (impact.type === 'improvement') {
+                    const currentValue = parseInt(impact.value);
+                    const change = Math.floor(Math.random() * 6) - 2;
+                    const newValue = Math.max(5, Math.min(40, currentValue + change));
+                    impact.value = `+${newValue}%`;
+                }
+            });
+            
+            // تحديث بيانات التدريب
+            trainingData.forEach(training => {
+                const change = Math.floor(Math.random() * 9) - 4;
+                training.score = Math.max(60, Math.min(100, training.score + change));
+            });
+            
+            // إعادة عرض كل شيء
+            renderCounters();
+            renderHourlyChart();
+            renderImpacts();
+            renderTrainingComparison();
+            
+            // إشعار بالتحديث
+            alert('تم تحديث البيانات بنجاح!');
+        }
+        
+        // تصدير التقرير
+        function exportReport() {
+            // في تطبيق حقيقي، هنا سيكون هناك اتصال بالخادم لإنشاء ملف PDF
+            // لكننا سنقوم بمحاكاة التصدير
+            const reportData = {
+                title: 'تقرير تحليل نقاط الألم الخفية',
+                generatedAt: new Date().toLocaleString('ar-SA'),
+                topCounters: counters.slice(0, 3),
+                peakHours: hourlyData.labels[hourlyData.values.indexOf(Math.max(...hourlyData.values))],
+                bestImpact: impacts.reduce((prev, current) => {
+                    const prevValue = parseInt(prev.value);
+                    const currentValue = parseInt(current.value);
+                    return prevValue > currentValue ? prev : current;
+                }),
+                bestTraining: trainingData.reduce((prev, current) => 
+                    prev.score > current.score ? prev : current
+                )
+            };
+            
+            const reportText = `
+                ====================================
+                تقرير تحليل نقاط الألم الخفية
+                ====================================
+                تم إنشاؤه في: ${reportData.generatedAt}
+                
+                العدادات الأعلى شدة:
+                1. ${reportData.topCounters[0].name}: ${reportData.topCounters[0].intensity}%
+                2. ${reportData.topCounters[1].name}: ${reportData.topCounters[1].intensity}%
+                3. ${reportData.topCounters[2].name}: ${reportData.topCounters[2].intensity}%
+                
+                ساعة الذروة: ${reportData.peakHours}
+                
+                أكثر التدخلات تأثيراً: ${reportData.bestImpact.label} (${reportData.bestImpact.value})
+                
+                أفضل أنواع التدريب: ${reportData.bestTraining.type} (${reportData.bestTraining.score}%)
+                
+                ====================================
+                التوصيات:
+                1. التركيز على تحسين أداء العداد: ${reportData.topCounters[0].name}
+                2. توزيع الحمل خلال ساعة الذروة (${reportData.peakHours})
+                3. تعميم نجاح ${reportData.bestImpact.label} على مجالات أخرى
+                4. توسيع نطاق ${reportData.bestTraining.type} ليشمل جميع الموظفين
+            `;
+            
+            // محاكاة تنزيل الملف
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(reportText));
+            element.setAttribute('download', 'تقرير_نقاط_الألم_الخفية.txt');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            
+            alert('تم تصدير التقرير بنجاح!');
+        }
     </script>
 </body>
 </html>
